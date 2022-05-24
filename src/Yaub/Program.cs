@@ -1,5 +1,9 @@
 ﻿var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN");
-var collection = new StorageCollection("mongodb://localhost", "Yaub");
+var dbPath = Environment.GetEnvironmentVariable("YAUB_DB");
+if (string.IsNullOrEmpty(dbPath))
+    dbPath = "mongodb://localhost";
+
+var collection = new StorageCollection(dbPath, "Yaub");
 var services = new ServiceCollection().AddSingleton(collection);
 
 var discord = new DiscordClient(new()
