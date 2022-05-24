@@ -1,0 +1,6 @@
+version: '3.9'
+services:
+  yaub:
+    build: src/
+    env_file:
+      - Yaub.env
