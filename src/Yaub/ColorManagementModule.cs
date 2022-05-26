@@ -103,6 +103,9 @@ public class ColorManagementModule : BaseCommandModule
         var storage = context.GetGuildStorage();
         var colors = await storage.GetOrCreate<ColorContainer>("colors");
         var member = context.Member;
+        if (member == null)
+            return;
+            
         var colorRole = colors.FirstOrDefault(x => x.Value.Equals(colorName, StringComparison.OrdinalIgnoreCase));
         if (colorRole.Key == 0)
         {

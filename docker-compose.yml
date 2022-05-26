@@ -2,6 +2,7 @@ version: '3.9'
 services:
   mongo:
     image: mongo
+    restart: unless-stopped
     expose:
       - 27017:27017
 
@@ -9,6 +10,7 @@ services:
       - ./mongo-data:/data/db
 
   yaub:
+    restart: unless-stopped
     build: src/
     env_file:
       - Yaub.env
