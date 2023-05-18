@@ -22,7 +22,7 @@ public class ModerationModule
 
         if (args.Author is DiscordMember member)
         {
-            if (restricted.Contains(args.Channel.Id) && !member.Permissions.HasFlag(Permissions.ManageChannels & Permissions.ManageMessages))
+            if (restricted.Contains(args.Channel.Id) && !member.Permissions.HasFlag(Permissions.ManageChannels | Permissions.ManageMessages))
             {
                 await args.Message.DeleteAsync();
             }
