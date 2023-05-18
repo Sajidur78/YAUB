@@ -1,7 +1,12 @@
-﻿var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN")?.Split(';') ?? Array.Empty<string>();
+﻿using System.Globalization;
+
+var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN")?.Split(';') ?? Array.Empty<string>();
 var dbPath = Environment.GetEnvironmentVariable("YAUB_DB");
 if (string.IsNullOrEmpty(dbPath))
     dbPath = "mongodb://localhost";
+
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
 if (botToken.Length == 0)
 {

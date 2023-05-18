@@ -1,11 +1,14 @@
-﻿namespace Yaub;
+﻿using System.Globalization;
+
+namespace Yaub;
 using RestrictedChannelsContainer = HashSet<ulong>;
 
 public class ModerationCommandsModule : ApplicationCommandModule
 {
     public const string RestrictedCollectionName = "RESTRICTED_CHANNELS";
 
-    [SlashCommand("restrict", "Makes the current channel restricted to send messages in"), SlashCommandPermissions(Permissions.ManageChannels | Permissions.ManageMessages)]
+    [SlashCommand("restrict", "Makes the current channel restricted to send messages in"), 
+     SlashCommandPermissions(Permissions.ManageChannels | Permissions.ManageMessages)]
     public async Task MakeRestricted(InteractionContext context)
     {
         var storage = context.GetGuildStorage();
@@ -21,7 +24,8 @@ public class ModerationCommandsModule : ApplicationCommandModule
         await context.CreateResponseAsync("This channel is now restricted.", true);
     }
 
-    [SlashCommand("unrestrict", "Makes the current channel unrestricted to send messages in"), SlashCommandPermissions(Permissions.ManageChannels | Permissions.ManageMessages)]
+    [SlashCommand("unrestrict", "Makes the current channel unrestricted to send messages in"), 
+     SlashCommandPermissions(Permissions.ManageChannels | Permissions.ManageMessages)]
     public async Task MakeUnrestricted(InteractionContext context)
     {
         var storage = context.GetGuildStorage();
@@ -34,5 +38,21 @@ public class ModerationCommandsModule : ApplicationCommandModule
 
         restricted.Remove(context.Channel.Id);
         await context.CreateResponseAsync("This channel is now unrestricted.", true);
+    }
+
+    [SlashCommand("restrictions", "List all restricted channels"),
+     SlashCommandPermissions(Permissions.ManageChannels | Permissions.ManageMessages)]
+    public async Task ListRestrictions(InteractionContext context)
+    {
+        var storage = context.GetGuildStorage();
+        var restricted = await storage.GetOrCreate<RestrictedChannelsContainer>(RestrictedCollectionName);
+        var sb = new StringBuilder();
+        sb.AppendLine("Restricted channels:");
+        foreach (var channelId in restricted)
+        {
+            sb.AppendLine($"- <#{channelId}>");
+        }
+
+        await context.CreateResponseAsync(sb.ToString(), true);
     }
 }
