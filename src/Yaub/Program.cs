@@ -20,7 +20,7 @@ foreach (var token in botToken)
     {
         AutoReconnect = true,
         TokenType = TokenType.Bot,
-        Intents = DiscordIntents.All,
+        Intents = DiscordIntents.AllUnprivileged,
         Token = token
     });
 
