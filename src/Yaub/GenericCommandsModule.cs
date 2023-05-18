@@ -71,6 +71,8 @@ public class GenericCommandsModule : ApplicationCommandModule
                 {
                     x.Name = channel.Name.Substring(ThreadSolvedPrefix.Length).Trim();
                 }
+
+                x.AuditLogReason = $"Unsolved by {context.User.Username}#{context.User.Discriminator}";
             });
 
             await context.CreateResponseAsync("Thread marked as unsolved.",  true);
@@ -151,6 +153,8 @@ public class GenericCommandsModule : ApplicationCommandModule
                 x.Name = $"{ThreadSolvedPrefix} {channel.Name}";
                 var applied = new List<ulong>(tags) { tag.Value };
                 x.AppliedTags = applied;
+
+                x.AuditLogReason = $"Marked as solved by {context.User.Username}#{context.User.Discriminator}";
             });
 
             tags.Add(tag.Value);
