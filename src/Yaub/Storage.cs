@@ -42,12 +42,17 @@ public class Storage
         var item = await Items.GetValueAsync(key);
 
         T result;
-        if (item?.Value == null)
+        if (item == null)
         {
             result = new T();
             Cache.Add(key, result);
             TrackObject(key, ObjectId.GenerateNewId(), ref result, true);
             return result;
+        }
+
+        if (item.Value == null)
+        {
+            item.Value = new T();
         }
 
         result = (T)item.Value;
