@@ -110,12 +110,20 @@ public class GenericCommandsModule : ApplicationCommandModule
         {
             await channel.ModifyAsync(x =>
             {
-                tags.Add(tag.Value);
                 x.Name = $"{ThreadSolvedPrefix} {channel.Name}";
-                x.AppliedTags = tags;
+                var applied = new List<ulong>(tags) { tag.Value };
+                x.AppliedTags = applied;
             });
 
-            await context.CreateResponseAsync("Thread marked as solved.", true);
+            tags.Add(tag.Value);
+            try
+            {
+                await context.CreateResponseAsync("Thread marked as solved.", true);
+            }
+            catch
+            {
+                // ignore
+            }
         }
         catch
         {
