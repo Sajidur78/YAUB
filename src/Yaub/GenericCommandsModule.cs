@@ -26,7 +26,15 @@ public class GenericCommandsModule : ApplicationCommandModule
 
         if (!ChannelTags.TryGetValue(context.Channel, out var tags))
         {
-            tags = channel.AppliedTags.Select(x => x.Id).ToList();
+            try
+            {
+                // AppliedTags getter throws NullReferenceException instead of returning an empty list or null
+                tags = channel.AppliedTags.Select(x => x.Id).ToList();
+            }
+            catch
+            {
+                tags = new();
+            }
             ChannelTags.Add(context.Channel, tags);
         }
 
@@ -92,7 +100,15 @@ public class GenericCommandsModule : ApplicationCommandModule
 
         if (!ChannelTags.TryGetValue(context.Channel, out var tags))
         {
-            tags = channel.AppliedTags.Select(x => x.Id).ToList();
+            try
+            {
+                // AppliedTags getter throws NullReferenceException instead of returning an empty list or null
+                tags = channel.AppliedTags.Select(x => x.Id).ToList();
+            }
+            catch
+            {
+                tags = new ();
+            }
             ChannelTags.Add(context.Channel, tags);
         }
 
