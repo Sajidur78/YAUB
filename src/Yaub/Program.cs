@@ -1,24 +1,43 @@
-﻿var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN");
+﻿using DSharpPlus.SlashCommands;
+
+var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN")?.Split(';') ?? Array.Empty<string>();
 var dbPath = Environment.GetEnvironmentVariable("YAUB_DB");
 if (string.IsNullOrEmpty(dbPath))
     dbPath = "mongodb://localhost";
 
-var collection = new StorageCollection(dbPath, "Yaub");
-var services = new ServiceCollection().AddSingleton(collection);
-
-var discord = new DiscordClient(new()
+if (botToken.Length == 0)
 {
-    AutoReconnect = true,
-    TokenType = TokenType.Bot,
-    Token = botToken
-});
+    Console.WriteLine("No bot token provided. Please set the YAUB_TOKEN environment variable.");
+    return;
+}
 
-var commands = discord.UseCommandsNext(new()
+foreach (var token in botToken)
 {
-    StringPrefixes = new[] { "!" },
-    Services = services.BuildServiceProvider()
-});
+    var collection = new StorageCollection(dbPath, "Yaub");
+    var services = new ServiceCollection().AddSingleton(collection);
 
-commands.RegisterCommands(Assembly.GetExecutingAssembly());
-await discord.ConnectAsync();
+    var discord = new DiscordClient(new()
+    {
+        AutoReconnect = true,
+        TokenType = TokenType.Bot,
+        Intents = DiscordIntents.All,
+        Token = token
+    });
+
+    var commands = discord.UseCommandsNext(new()
+    {
+        StringPrefixes = new[] { "!" },
+        Services = services.BuildServiceProvider()
+    });
+
+    var slash = discord.UseSlashCommands(new()
+    {
+        Services = commands.Services
+    });
+
+    slash.RegisterCommands(Assembly.GetExecutingAssembly());
+    commands.RegisterCommands(Assembly.GetExecutingAssembly());
+    await discord.ConnectAsync();
+}
+
 await Task.Delay(-1);
