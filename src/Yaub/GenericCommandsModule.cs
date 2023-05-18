@@ -99,7 +99,7 @@ public class GenericCommandsModule : ApplicationCommandModule
             return;
         }
 
-        var solved = channel.AppliedTags.Any(x => x.Id == tag) || channel.Name.StartsWith(ThreadSolvedPrefix, StringComparison.OrdinalIgnoreCase);
+        var solved = tags.Any(x => x == tag) || channel.Name.StartsWith(ThreadSolvedPrefix, StringComparison.OrdinalIgnoreCase);
         if (solved)
         {
             await context.CreateResponseAsync("Thread is already marked as solved.", true);
