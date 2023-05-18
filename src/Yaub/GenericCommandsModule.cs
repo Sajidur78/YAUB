@@ -63,10 +63,10 @@ public class GenericCommandsModule : ApplicationCommandModule
         {
             await channel.ModifyAsync(x =>
             {
+                x.IsArchived = false;
                 tags.Remove(tag.Value);
 
                 x.AppliedTags = tags;
-
                 if (channel.Name.StartsWith(ThreadSolvedPrefix, StringComparison.OrdinalIgnoreCase))
                 {
                     x.Name = channel.Name.Substring(ThreadSolvedPrefix.Length).Trim();
@@ -136,22 +136,24 @@ public class GenericCommandsModule : ApplicationCommandModule
 
         try
         {
+            try
+            {
+                await context.CreateResponseAsync("Marking thread as solved.", true);
+            }
+            catch
+            {
+                // ignore
+            }
+
             await channel.ModifyAsync(x =>
             {
+                x.IsArchived = true;
                 x.Name = $"{ThreadSolvedPrefix} {channel.Name}";
                 var applied = new List<ulong>(tags) { tag.Value };
                 x.AppliedTags = applied;
             });
 
             tags.Add(tag.Value);
-            try
-            {
-                await context.CreateResponseAsync("Thread marked as solved.", true);
-            }
-            catch
-            {
-                // ignore
-            }
         }
         catch
         {
