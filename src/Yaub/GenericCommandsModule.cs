@@ -52,7 +52,8 @@ public class GenericCommandsModule : ApplicationCommandModule
             return;
         }
 
-        if (context.User.Id != channel.CreatorId && !context.Member.Permissions.HasFlag(Permissions.ManageThreads))
+        var perms = CollectPermission(channel, context.Member);
+        if (context.User.Id != channel.CreatorId && !perms.HasFlag(Permissions.ManageMessages))
         {
             await context.CreateResponseAsync("Only the thread owner can mark a thread as unsolved.", true);
             return;
@@ -126,7 +127,8 @@ public class GenericCommandsModule : ApplicationCommandModule
             return;
         }
 
-        if (context.User.Id != channel.CreatorId && !context.Member.Permissions.HasFlag(Permissions.ManageThreads))
+        var perms = CollectPermission(channel, context.Member);
+        if (context.User.Id != channel.CreatorId && !perms.HasFlag(Permissions.ManageThreads))
         {
             await context.CreateResponseAsync("Only the thread owner can mark a thread as solved.", true);
             return;
@@ -155,6 +157,43 @@ public class GenericCommandsModule : ApplicationCommandModule
         {
             tags.Remove(tag.Value);
             // ignore
+        }
+    }
+
+    public static Permissions CollectPermission(DiscordChannel channel, DiscordMember member)
+    {
+        var permission = member.Permissions;
+        var c = channel;
+        while (c != null)
+        {
+            foreach (var overwrite in c.PermissionOverwrites)
+            {
+                if (CheckApply(overwrite))
+                {
+                    permission |= overwrite.Allowed;
+                    permission &= ~overwrite.Denied;
+                }
+            }
+            try
+            {
+                c = c.Parent;
+            }
+            catch
+            {
+                c = null;
+            }
+        }
+
+        return permission;
+
+        bool CheckApply(DiscordOverwrite overwrite)
+        {
+            if (overwrite.Type == OverwriteType.Role)
+            {
+                return member.Roles.Any(x => x.Id == overwrite.Id);
+            }
+
+            return overwrite.Id == member.Id;
         }
     }
 }
