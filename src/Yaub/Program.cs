@@ -1,6 +1,4 @@
-﻿using DSharpPlus.SlashCommands;
-
-var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN")?.Split(';') ?? Array.Empty<string>();
+﻿var botToken = Environment.GetEnvironmentVariable("YAUB_TOKEN")?.Split(';') ?? Array.Empty<string>();
 var dbPath = Environment.GetEnvironmentVariable("YAUB_DB");
 if (string.IsNullOrEmpty(dbPath))
     dbPath = "mongodb://localhost";
@@ -37,6 +35,8 @@ foreach (var token in botToken)
 
     slash.RegisterCommands(Assembly.GetExecutingAssembly());
     commands.RegisterCommands(Assembly.GetExecutingAssembly());
+
+    ModerationModule.Setup(commands.Services, discord);
     await discord.ConnectAsync();
 }
 

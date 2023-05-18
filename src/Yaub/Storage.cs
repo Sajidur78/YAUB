@@ -42,7 +42,7 @@ public class Storage
         var item = await Items.GetValueAsync(key);
 
         T result;
-        if (item == null)
+        if (item?.Value == null)
         {
             result = new T();
             Cache.Add(key, result);
