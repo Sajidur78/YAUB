@@ -4,13 +4,15 @@ using ColorContainer = List<KeyValuePair<ulong, string>>;
 [Group("color")]
 public class ColorManagementModule : BaseCommandModule
 {
+    public const string CollectionName = "colors";
+
     [Command("remove"), RequireUserPermissions(Permissions.ManageRoles)]
     public async Task RemoveColorCommand(CommandContext context, string name)
     {
         name = name.Trim();
 
         var storage = context.GetGuildStorage();
-        var container = await storage.GetOrCreate<ColorContainer>("colors");
+        var container = await storage.GetOrCreate<ColorContainer>(CollectionName);
 
         var removed = container.RemoveAll(x => x.Value.Equals(name, StringComparison.OrdinalIgnoreCase));
         if (removed == 0)
@@ -29,7 +31,7 @@ public class ColorManagementModule : BaseCommandModule
         name = name.Trim();
 
         var storage = context.GetGuildStorage();
-        var container = await storage.GetOrCreate<ColorContainer>("colors");
+        var container = await storage.GetOrCreate<ColorContainer>(CollectionName);
         var role = context.Guild.Roles.FirstOrDefault(
             x => x.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
@@ -55,7 +57,7 @@ public class ColorManagementModule : BaseCommandModule
     {
         await context.TriggerTypingAsync();
         var storage = context.GetGuildStorage();
-        if ((await storage.Get<IList>("colors"))?.Count is not null and not 0)
+        if ((await storage.Get<IList>(CollectionName))?.Count is not null and not 0)
         {
             await context.RespondAsync("FUCK OFF!!");
             return;
@@ -68,7 +70,7 @@ public class ColorManagementModule : BaseCommandModule
                 colors.Add(new (role.Key, role.Value.Name));
         }
 
-        await storage.Set("colors", colors);
+        await storage.Set(CollectionName, colors);
         await context.RespondAsync($"Found {colors.Count} colours.");
 
         await storage.SaveChanges();
@@ -79,13 +81,13 @@ public class ColorManagementModule : BaseCommandModule
     {
         await context.TriggerTypingAsync();
         var storage = context.GetGuildStorage();
-        if (!await storage.Contains("colors"))
+        if (!await storage.Contains(CollectionName))
         {
             await context.RespondAsync("Guild doesn't have colours set up.");
             return;
         }
 
-        var colors = await storage.GetOrCreate<ColorContainer>("colors");
+        var colors = await storage.GetOrCreate<ColorContainer>(CollectionName);
         var responseBuilder = new StringBuilder();
         responseBuilder.AppendLine("```");
 
@@ -101,7 +103,7 @@ public class ColorManagementModule : BaseCommandModule
     {
         await context.TriggerTypingAsync();
         var storage = context.GetGuildStorage();
-        var colors = await storage.GetOrCreate<ColorContainer>("colors");
+        var colors = await storage.GetOrCreate<ColorContainer>(CollectionName);
         var member = context.Member;
         if (member == null)
             return;

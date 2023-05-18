@@ -12,6 +12,8 @@ global using DSharpPlus;
 global using DSharpPlus.Net;
 global using DSharpPlus.CommandsNext;
 global using DSharpPlus.CommandsNext.Attributes;
+global using DSharpPlus.Entities;
+global using DSharpPlus.SlashCommands;
 
 global using MongoDB.Driver;
 global using MongoDB.Bson;

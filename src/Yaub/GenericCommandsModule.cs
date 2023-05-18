@@ -1,6 +1,4 @@
 ﻿namespace Yaub;
-using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -43,6 +41,12 @@ public class GenericCommandsModule : ApplicationCommandModule
         if (!solved)
         {
             await context.CreateResponseAsync("Thread is not marked as solved.", true);
+            return;
+        }
+
+        if (context.User.Id != channel.CreatorId && !context.Member.Permissions.HasFlag(Permissions.ManageThreads))
+        {
+            await context.CreateResponseAsync("Only the thread owner can mark a thread as unsolved.", true);
             return;
         }
 
@@ -103,6 +107,12 @@ public class GenericCommandsModule : ApplicationCommandModule
         if (solved)
         {
             await context.CreateResponseAsync("Thread is already marked as solved.", true);
+            return;
+        }
+
+        if (context.User.Id != channel.CreatorId && !context.Member.Permissions.HasFlag(Permissions.ManageThreads))
+        {
+            await context.CreateResponseAsync("Only the thread owner can mark a thread as solved.", true);
             return;
         }
 
