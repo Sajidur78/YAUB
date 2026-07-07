@@ -1,4 +1,4 @@
-﻿namespace Yaub;
+﻿namespace Yaub.CommandModules;
 using ColorContainer = List<KeyValuePair<ulong, string>>;
 
 [Group("color")]
@@ -22,7 +22,7 @@ public class ColorManagementModule : BaseCommandModule
         }
 
         await context.RespondAsync($"Removed {name} from colour list.");
-        await storage.SaveChanges();
+        await storage.Save(CollectionName, container);
     }
 
     [Command("add"), RequireUserPermissions(Permissions.ManageRoles)]
@@ -48,7 +48,7 @@ public class ColorManagementModule : BaseCommandModule
         }
 
         container.Add(new (role.Key, role.Value.Name));
-        await storage.SaveChanges();
+        await storage.Save(CollectionName, container);
         await context.RespondAsync($"Added {role.Value.Name} to colours.");
     }
 
@@ -70,10 +70,10 @@ public class ColorManagementModule : BaseCommandModule
                 colors.Add(new (role.Key, role.Value.Name));
         }
 
-        await storage.Set(CollectionName, colors);
+        await storage.Save(CollectionName, colors);
         await context.RespondAsync($"Found {colors.Count} colours.");
 
-        await storage.SaveChanges();
+        await storage.Save(CollectionName, colors);
     }
 
     [Command("list")]

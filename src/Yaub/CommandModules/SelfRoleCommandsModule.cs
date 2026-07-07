@@ -1,4 +1,5 @@
-﻿namespace Yaub;
+﻿namespace Yaub.CommandModules;
+
 using SelfRoleContainer = List<KeyValuePair<ulong, string>>;
 
 public class SelfRoleCommandsModule : ApplicationCommandModule

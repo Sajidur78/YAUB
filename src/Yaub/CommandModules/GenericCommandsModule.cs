@@ -1,4 +1,4 @@
-﻿namespace Yaub;
+﻿namespace Yaub.CommandModules;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
